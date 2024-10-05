@@ -1,9 +1,19 @@
+require("dotenv").config();
 const TelegramApi = require("node-telegram-bot-api");
-const {gameOptions, againOptions} = require('./options.js')
+const {gameOptions, againOptions} = require('./options.js');
 
-const token = "7255500226:AAGnVMVD7OijgafI8E8yulwztN5ZCFFe3qU";
-const bot = new TelegramApi(token, {polling: true});
+const TOKEN = process.env.TG_TOKEN;
 const chats = {};
+const bot = new TelegramApi(TOKEN, {
+  polling: true
+  // polling: {
+  //   interval: 300,
+  //   autoStart: true,
+  //   params: {
+  //     timeout: 10
+  //   }
+  // }
+});
 
 const startGame = async (chatId) => {
   await bot.sendMessage(chatId, "Сейчас я загадаю цифру от 0 до 9, а ты попробуй ее угадать)");
@@ -19,12 +29,14 @@ const start = () => {
     {command: "/start", description: "Начальное приветствие"},
     {command: "/info", description: "Информация о себе"},
     {command: "/game", description: "Играть"},
-  ])
+  ]);
 
   bot.on("message", async msg => {
     const text = msg.text;
     const chatId = msg.chat.id;
     const userData = msg.from;
+
+    console.log(msg);
 
     if (text === '/start') {
       // await bot.sendSticker(chatId, "https://tgram.ru/wiki/stickers/img/Privet_1/png/16.png");
@@ -32,7 +44,7 @@ const start = () => {
     };
 
     if (text === "/info") {
-      // await bot.sendSticker(chatId, "https://tgram.ru/wiki/stickers/img/Privet_1/png/16.png");
+      await bot.sendSticker(chatId, "https://tgram.ru/wiki/stickers/img/Privet_1/png/16.png");
       return await bot.sendMessage(chatId, `Тебя зовут ${userData.first_name} ${userData.last_name ?? ''})`);
     };
 
